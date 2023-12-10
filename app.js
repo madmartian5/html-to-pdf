@@ -39,7 +39,9 @@ app.get('/html-to-pdf', async (req, res) => {
             return res.status(400).send('No HTML content provided.');
         }
 
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+            args: ['--no-sandbox', '--disable-setuid-sandbox'] // these arguments are often necessary in cloud environments
+        });
         const page = await browser.newPage();
         await page.setContent(htmlContent);
 
