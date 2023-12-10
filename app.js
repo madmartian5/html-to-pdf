@@ -32,6 +32,30 @@ app.post('/html-to-pdf', async (req, res) => {
     }
 });
 
+app.get('/html-to-pdf', async (req, res) => {
+    try {
+        const htmlContent = req.query.html;
+        if (!htmlContent) {
+            return res.status(400).send('No HTML content provided.');
+        }
+
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
+
+        const pdf = await page.pdf({ format: 'A4' });
+        await browser.close();
+
+        res.contentType('application/pdf');
+        res.send(pdf);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('An error occurred');
+    }
+});
+
+
+
 // Endpoint to convert uploaded HTML file to PDF
 app.post('/upload-html-to-pdf', upload.single('htmlfile'), async (req, res) => {
     try {
